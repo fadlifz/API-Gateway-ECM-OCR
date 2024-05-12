@@ -42,7 +42,7 @@ public class ApiGatewayService implements Serializable {
                     String.class);
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
-            return jsonNode.get("extractedText").asText();
+            return jsonNode.get("result").asText();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
