@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,20 +28,31 @@ public class ApiGatewayController {
     private ApiGatewayService extractionService;
 
     @PostMapping("/scanFile")
-    ResponseEntity<Map<String, Object>> scanFile(@RequestBody AllRequest file)
+    ResponseEntity<Map<String, Object>> scanFile(@RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("requestId") String requestId)
             throws IOException {
-        String text = extractionService.callApiOcr(file);
+                //sebelum eksekusi di bawah ambil token dulu
+//bikin 1 function lagi yang outputnya token dan diambil dari parameter dari postman(ambil dari partner token adira)
+// setelah didapat token lalu execute callApiOcr
+// tapi nanti urlnya ganti pake url scan ktp adira tapi yang token pake yang akses token
+
         Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("extractedText", text);
-        return new ResponseEntity<>(jsonMap, HttpStatus.OK);
+        if (!authorizationHeader.isEmpty()) {
+            String text = extractionService.callApiOcr(authorizationHeader, file, requestId);
+            jsonMap.put("extractedText", text);
+            return new ResponseEntity<>(jsonMap, HttpStatus.OK);
+        }
+        jsonMap.put("extractedText", null);
+        return new ResponseEntity<>(jsonMap, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/savePdfText")
-    ResponseEntity<Map<String, Object>> savePdfText(@RequestBody AllRequest file)
-            throws IOException {
-        EcmResponse text = extractionService.callApiEcm(file);
-        Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("extractedText", text);
-        return new ResponseEntity<>(jsonMap, HttpStatus.OK);
-    }
+    // @PostMapping("/savePdfText")
+    // ResponseEntity<Map<String, Object>> savePdfText(@RequestBody AllRequest file)
+    // throws IOException {
+    // EcmResponse text = extractionService.callApiEcm(file);
+    // Map<String, Object> jsonMap = new HashMap<>();
+    // jsonMap.put("extractedText", text);
+    // return new ResponseEntity<>(jsonMap, HttpStatus.OK);
+    // }
 }
