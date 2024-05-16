@@ -47,27 +47,40 @@ public class ApiGatewayService implements Serializable {
     @Value("${api.ecm.uploadFile}")
     private String apiEcmUploadFile;
 
+    @Value("${api.getToken.username}")
+    private String apigetTokenUsername;
+    
+    @Value("${api.getToken.password}")
+    private String apigetTokenPassword;
+   
+    @Value("${api.getToken.xApiKey}")
+    private String apigetTokenXApiKey;
+    
+    @Value("${api.getToken.grantType}")
+    private String apigetTokenGrantType;
+    
+    @Value("${api.getToken.scope}")
+    private String apigetTokenScope;
+
     public String getToken() {
     try {
 
         RestTemplate restTemplate = new RestTemplate();
 
         Encoder encoder = Base64.getEncoder();
-        String username = "4ELct1DD7b4g0mGV";
-        String password = "TaGBoUCL3jePg51t";
-        String originalString = username+":"+password;
+        String originalString = apigetTokenUsername+":"+apigetTokenPassword;
         String encodedString = encoder.encodeToString(originalString.getBytes());
 
         String headerAthorization="Basic "+encodedString;
 
         // BasicAuth
         HttpHeaders headers = new HttpHeaders();
-        headers.set("x-api-key", "4kWHq8vIjV94NiosmOORZi5laxaP8l0dIZIjysTv");
+        headers.set("x-api-key", apigetTokenXApiKey);
         headers.set("Authorization", headerAthorization);
         
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", "client_credentials");
-        map.add("scope", "partner_api offline_access");
+        map.add("grant_type", apigetTokenGrantType);
+        map.add("scope", apigetTokenScope);
 
         HttpEntity<MultiValueMap<String, Object>> fileRequestHttpEntity = new HttpEntity<>(map,headers);
         ResponseEntity<String> response = restTemplate.exchange(apiUrlToken, HttpMethod.POST, fileRequestHttpEntity,
@@ -90,17 +103,8 @@ public class ApiGatewayService implements Serializable {
             String testToken;
             HttpHeaders headers = new HttpHeaders();
             MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-    
-            //just in case handling multiple files should be done in BE
-            // if (file.size() == 1) {
-            //     manageFile = fileManagementService.manageSingleFile(file);    
-            // }else{
-            //     if(fileManagementService.getFileExtension(null))
-            // }
 
             manageFile = fileManagementService.manageSingleFile(file);
-            
-                // manageFile = fileManagementService.mergeFiles(file);
     
             if ("ocr".equals(apiType)) {
                 testToken = getToken();
@@ -143,6 +147,7 @@ public class ApiGatewayService implements Serializable {
     
             RestTemplate restTemplate = new RestTemplate();
             map.add("file", new FileSystemResource(manageFile));
+           
             map.add("requestId", requestId);
             map.add("documentType", documentType);
     
@@ -151,6 +156,7 @@ public class ApiGatewayService implements Serializable {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             resultMap = objectMapper.convertValue(jsonNode, new TypeReference<Map<String, Object>>() {});
+            manageFile.delete();
             return resultMap;
         } catch (Exception e) {
             e.printStackTrace();

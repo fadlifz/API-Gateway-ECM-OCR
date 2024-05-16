@@ -189,18 +189,18 @@ public class FileManagementService {
     }
 
     public File manageSingleFile(List<MultipartFile> uploadedFile) throws IOException {
-        File file = null;
-        for (MultipartFile getFile : uploadedFile) {
-             file = new File(getFile.getOriginalFilename());
-            try (FileOutputStream os = new FileOutputStream(file)) {
-                os.write(getFile.getBytes());
-            
-            }
-            
-            // file.delete();   
-        }
+        File convFile = null;
         
-        return file;
+        for(MultipartFile file : uploadedFile){
+            convFile = new File(file.getOriginalFilename());
+            convFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());   
+            fos.close();
+        }
+
+        return convFile;
+
     }
 
 }
