@@ -1,24 +1,19 @@
 package com.example.apigatewayscanningdocument.controller;
 
-import com.example.apigatewayscanningdocument.request.AllRequest;
-import com.example.apigatewayscanningdocument.response.EcmResponse;
 import com.example.apigatewayscanningdocument.service.ApiGatewayService;
-
-import net.sourceforge.tess4j.TesseractException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,32 +22,47 @@ public class ApiGatewayController {
     @Autowired
     private ApiGatewayService extractionService;
 
-    @PostMapping("/scanFile")
-    ResponseEntity<Map<String, Object>> scanFile(@RequestHeader("Authorization") String authorizationHeader,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("requestId") String requestId)
+    @CrossOrigin(origins={
+        "*",
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "http://10.15.130.157:443",
+        "http://10.15.130.157:80",
+        "https://homelabs.weekendlabs.cloud"})
+    @PostMapping("/scanDocument")
+    ResponseEntity<Map<String, Object>> ocrKtp(@RequestParam("RemoteFile") List<MultipartFile> file,
+            @RequestParam("requestId") String requestId, @RequestParam("documentType") String documentType)
             throws IOException {
-                //sebelum eksekusi di bawah ambil token dulu
-//bikin 1 function lagi yang outputnya token dan diambil dari parameter dari postman(ambil dari partner token adira)
-// setelah didapat token lalu execute callApiOcr
-// tapi nanti urlnya ganti pake url scan ktp adira tapi yang token pake yang akses token
-
-        Map<String, Object> jsonMap = new HashMap<>();
-        if (!authorizationHeader.isEmpty()) {
-            String text = extractionService.callApiOcr(authorizationHeader, file, requestId);
-            jsonMap.put("extractedText", text);
-            return new ResponseEntity<>(jsonMap, HttpStatus.OK);
-        }
-        jsonMap.put("extractedText", null);
-        return new ResponseEntity<>(jsonMap, HttpStatus.BAD_REQUEST);
+                
+                // Check if documentType is not provided or not in the allowed values
+                if (documentType == null || documentType.isEmpty() || (!documentType.equals("0") && !documentType.equals("1") && !documentType.equals("2"))) {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("info", "Invalid or undefined document type!");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+                Map<String, Object> result = extractionService.callApi(file, requestId,documentType, "","","","","","ocr");
+                return new ResponseEntity<>(result, HttpStatus.OK);
+           
     }
-
-    // @PostMapping("/savePdfText")
-    // ResponseEntity<Map<String, Object>> savePdfText(@RequestBody AllRequest file)
-    // throws IOException {
-    // EcmResponse text = extractionService.callApiEcm(file);
-    // Map<String, Object> jsonMap = new HashMap<>();
-    // jsonMap.put("extractedText", text);
-    // return new ResponseEntity<>(jsonMap, HttpStatus.OK);
-    // }
+    
+    @CrossOrigin(origins={
+        "*",
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "http://10.15.130.157:443",
+        "http://10.15.130.157:80",
+        "https://homelabs.weekendlabs.cloud"})
+    @PostMapping("/saveDocument")
+    ResponseEntity<Map<String, Object>> callEcm(@RequestParam("file") List<MultipartFile> file,
+            @RequestParam("requestId") String requestId, @RequestParam("documentType") String documentType,
+            @RequestParam("documentTitle") String documentTitle, @RequestParam("application") String application,
+            @RequestParam("objectStore") String objectStore, @RequestParam("nama") String nama, @RequestParam("region") String region)
+            throws IOException {
+                
+                //bikin 1 fungsi untuk compress image menjadi 1mb(hanya untuk ECM)
+                Map<String, Object> result = extractionService.callApi(file, requestId,documentType, documentTitle,nama,application,objectStore,region,"ecm");
+                return new ResponseEntity<>(result, HttpStatus.OK);
+           
+           
+    }
 }
