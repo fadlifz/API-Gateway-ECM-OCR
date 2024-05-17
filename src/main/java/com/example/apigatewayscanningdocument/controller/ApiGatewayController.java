@@ -52,7 +52,7 @@ public class ApiGatewayController {
         "http://10.15.130.157:80",
         "https://homelabs.weekendlabs.cloud"})
     @PostMapping("/saveDocument")
-    ResponseEntity<Map<String, Object>> callEcm(@RequestParam("file") List<MultipartFile> file,
+    ResponseEntity<Map<String, Object>> callEcm(@RequestParam("RemoteFile") List<MultipartFile> file,
             @RequestParam("requestId") String requestId, @RequestParam("documentType") String documentType,
             @RequestParam("documentTitle") String documentTitle, @RequestParam("application") String application,
             @RequestParam("objectStore") String objectStore, @RequestParam("nama") String nama, @RequestParam("region") String region)
