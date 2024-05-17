@@ -34,7 +34,7 @@ public class ApiGatewayController {
             throws IOException {
                 
                 // Check if documentType is not provided or not in the allowed values
-                if (documentType == null || documentType.isEmpty() || (!documentType.equals("0") && !documentType.equals("1") && !documentType.equals("2"))) {
+                if (documentType == null || documentType.isEmpty() || (!documentType.equals("0") && !documentType.equals("1") && !documentType.equals("2") && !documentType.equals("3"))) {
                     Map<String, Object> response = new HashMap<>();
                     response.put("info", "Invalid or undefined document type!");
                     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

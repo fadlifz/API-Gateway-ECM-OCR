@@ -41,6 +41,9 @@ public class ApiGatewayService implements Serializable {
     @Value("${api.ocr.urlFakturKendaraan}")
     private String apiUrlFakturKendaraan;
 
+    @Value("${api.ocr.urlFakturHeInvoice}")
+    private String apiUrlFakturHeInvoice;
+
     @Value("${api.ecm.apiKey}")
     private String apiKey;
 
@@ -122,6 +125,9 @@ public class ApiGatewayService implements Serializable {
                         break;
                     case "2":
                         apiUrl = apiUrlFakturKendaraan;
+                        break;
+                    case "3":
+                        apiUrl = apiUrlFakturHeInvoice;
                         break;
                     default:
                         break;
