@@ -57,8 +57,6 @@ public class ApiGatewayController {
             @RequestParam("documentTitle") String documentTitle, @RequestParam("application") String application,
             @RequestParam("objectStore") String objectStore, @RequestParam("nama") String nama, @RequestParam("region") String region)
             throws IOException {
-                
-                //bikin 1 fungsi untuk compress image menjadi 1mb(hanya untuk ECM)
                 Map<String, Object> result = extractionService.callApi(file, requestId,documentType, documentTitle,nama,application,objectStore,region,"ecm");
                 return new ResponseEntity<>(result, HttpStatus.OK);
            
