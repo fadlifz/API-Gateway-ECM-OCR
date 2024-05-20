@@ -163,13 +163,16 @@ public class ApiGatewayService implements Serializable {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             resultMap = objectMapper.convertValue(jsonNode, new TypeReference<Map<String, Object>>() {});
             manageFile.delete();
-            return resultMap;
+            return resultMap;            
         } catch (Exception e) {
             e.printStackTrace();
+            manageFile.delete();
             resultMap.put("status", "error");
             resultMap.put("message", e.getMessage());
+            
             return resultMap;
         }
+        
     }
 
 }
