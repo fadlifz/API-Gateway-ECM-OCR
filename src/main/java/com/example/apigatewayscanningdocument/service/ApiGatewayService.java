@@ -133,6 +133,7 @@ public class ApiGatewayService implements Serializable {
                         break;
                 }
                 map.add("documentType", documentType);
+                map.add("requestId", requestId);
             } else if ("ecm".equals(apiType)) {
                 testToken = apiKey;
                 if (testToken == null) {
@@ -141,12 +142,13 @@ public class ApiGatewayService implements Serializable {
                 }
                 headers.set("x-api-key", testToken);
                 apiUrl = apiEcmUploadFile;
-                map.add("documentTitle", documentTitle);
-                map.add("name", name);
-                map.add("application", application);
-                map.add("objectStore", objectStore);
-                map.add("region", region);
-                map.add("documentType", "KTPPemohon");
+                map.add("documentTitle", "1_BPKBTest_001_AP_toDelete");
+                map.add("nama", "Arifin");
+                map.add("application", "POC_CMS_BPKB");
+                map.add("objectStore", "ADIRAOS");
+                map.add("region", "0100 - Jabodetabek");
+                map.add("documentType", "BPKBUtamaCustomer");
+                map.add("requestId", "123");
             } else {
                 resultMap.put("status", "error");
                 resultMap.put("message", "Invalid apiType");
@@ -155,8 +157,6 @@ public class ApiGatewayService implements Serializable {
     
             RestTemplate restTemplate = new RestTemplate();
             map.add("file", new FileSystemResource(manageFile));
-           
-            map.add("requestId", requestId);
     
             HttpEntity<MultiValueMap<String, Object>> fileRequestHttpEntity = new HttpEntity<>(map, headers);
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, fileRequestHttpEntity, String.class);
