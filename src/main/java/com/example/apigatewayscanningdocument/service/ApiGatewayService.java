@@ -132,6 +132,7 @@ public class ApiGatewayService implements Serializable {
                     default:
                         break;
                 }
+                map.add("documentType", documentType);
             } else if ("ecm".equals(apiType)) {
                 testToken = apiKey;
                 if (testToken == null) {
@@ -145,6 +146,7 @@ public class ApiGatewayService implements Serializable {
                 map.add("application", application);
                 map.add("objectStore", objectStore);
                 map.add("region", region);
+                map.add("documentType", "KTPPemohon");
             } else {
                 resultMap.put("status", "error");
                 resultMap.put("message", "Invalid apiType");
@@ -155,7 +157,6 @@ public class ApiGatewayService implements Serializable {
             map.add("file", new FileSystemResource(manageFile));
            
             map.add("requestId", requestId);
-            map.add("documentType", documentType);
     
             HttpEntity<MultiValueMap<String, Object>> fileRequestHttpEntity = new HttpEntity<>(map, headers);
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, fileRequestHttpEntity, String.class);
