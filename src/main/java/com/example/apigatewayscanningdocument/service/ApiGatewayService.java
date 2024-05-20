@@ -142,7 +142,7 @@ public class ApiGatewayService implements Serializable {
                 }
                 headers.set("x-api-key", testToken);
                 apiUrl = apiEcmUploadFile;
-                map.add("documentTitle", "1_BPKBTest_001_AP_toDelete");
+                map.add("documentTitle", documentTitle);
                 map.add("nama", "Arifin");
                 map.add("application", "POC_CMS_BPKB");
                 map.add("objectStore", "ADIRAOS");
