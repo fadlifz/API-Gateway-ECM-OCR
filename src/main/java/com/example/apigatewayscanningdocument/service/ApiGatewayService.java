@@ -25,6 +25,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Service
 public class ApiGatewayService implements Serializable {
@@ -102,6 +105,8 @@ public class ApiGatewayService implements Serializable {
         String apiUrl = "";
         FileManagementService fileManagementService = new FileManagementService();
         File manageFile = null;
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         try {
             String testToken;
             HttpHeaders headers = new HttpHeaders();
@@ -133,7 +138,7 @@ public class ApiGatewayService implements Serializable {
                         break;
                 }
                 map.add("documentType", documentType);
-                
+                map.add("requestId", requestId);
             } else if ("ecm".equals(apiType)) {
                 testToken = apiKey;
                 if (testToken == null) {
@@ -148,12 +153,13 @@ public class ApiGatewayService implements Serializable {
                 map.add("objectStore", "ADIRAOS");
                 map.add("region", "0100 - Jabodetabek");
                 map.add("documentType", "BPKBUtamaCustomer");
+                map.add("requestId", now.format(formatter));
             } else {
                 resultMap.put("status", "error");
                 resultMap.put("message", "Invalid apiType");
                 return resultMap;
             }
-            map.add("requestId", requestId);
+            
             RestTemplate restTemplate = new RestTemplate();
             map.add("file", new FileSystemResource(manageFile));
     

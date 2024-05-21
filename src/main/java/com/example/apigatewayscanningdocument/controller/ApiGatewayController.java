@@ -58,8 +58,6 @@ public class ApiGatewayController {
             @RequestParam("objectStore") String objectStore, @RequestParam("nama") String nama, @RequestParam("region") String region)
             throws IOException {
                 Map<String, Object> result = extractionService.callApi(file, requestId,documentType, documentTitle,nama,application,objectStore,region,"ecm");
-                return new ResponseEntity<>(result, HttpStatus.OK);
-           
-           
+                return new ResponseEntity<>(result, HttpStatus.OK);        
     }
 }
